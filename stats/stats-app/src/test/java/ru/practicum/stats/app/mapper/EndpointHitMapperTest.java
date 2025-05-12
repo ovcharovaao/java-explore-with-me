@@ -1,8 +1,9 @@
-package ru.practicum.stats.app;
+package ru.practicum.stats.app.mapper;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import ru.practicum.stats.app.model.EndpointHit;
 import ru.practicum.stats.dto.EndpointHitDto;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ class EndpointHitMapperTest {
     private final EndpointHitMapper mapper = Mappers.getMapper(EndpointHitMapper.class);
 
     @Test
-    @DisplayName("Должен корректно мапить DTO в Entity")
+    @DisplayName("Должен корректно маппить DTO в Entity")
     void shouldMapDtoToEntity() {
         LocalDateTime timestamp = LocalDateTime.now();
         EndpointHitDto dto = new EndpointHitDto("my-app", "/test", "127.0.0.1", timestamp);

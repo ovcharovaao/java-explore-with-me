@@ -1,9 +1,10 @@
-package ru.practicum.stats.app;
+package ru.practicum.stats.app.repository;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import ru.practicum.stats.app.model.EndpointHit;
 import ru.practicum.stats.dto.ViewStats;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class StatsRepositoryTest {
-
     @Autowired
     private StatsRepository repository;
 
@@ -56,7 +56,7 @@ class StatsRepositoryTest {
     void shouldReturnUniqueStatsSortedByIpCount() {
         LocalDateTime now = LocalDateTime.now();
         repository.save(new EndpointHit(null, "app", "/x", "1.1.1.1", now.minusHours(1)));
-        repository.save(new EndpointHit(null, "app", "/x", "1.1.1.1", now.minusHours(2))); // тот же IP
+        repository.save(new EndpointHit(null, "app", "/x", "1.1.1.1", now.minusHours(2)));
         repository.save(new EndpointHit(null, "app", "/x", "1.1.1.2", now.minusHours(3)));
 
         List<ViewStats> stats = repository.findUniqueStats(
@@ -65,6 +65,6 @@ class StatsRepositoryTest {
 
         assertThat(stats).hasSize(1);
         assertThat(stats.get(0).getUri()).isEqualTo("/x");
-        assertThat(stats.get(0).getHits()).isEqualTo(2); // 2 разных IP
+        assertThat(stats.get(0).getHits()).isEqualTo(2);
     }
 }

@@ -1,9 +1,12 @@
-package ru.practicum.stats.app;
+package ru.practicum.stats.app.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import ru.practicum.stats.app.mapper.EndpointHitMapper;
+import ru.practicum.stats.app.model.EndpointHit;
+import ru.practicum.stats.app.repository.StatsRepository;
 import ru.practicum.stats.dto.EndpointHitDto;
 import ru.practicum.stats.dto.ViewStats;
 
@@ -29,8 +32,8 @@ class StatsServiceTest {
         service = new StatsService(repository, mapper);
     }
 
-    @DisplayName("Сохранение хита должно маппировать DTO в сущность и сохранить её")
     @Test
+    @DisplayName("Сохранение хита должно маппировать DTO в сущность и сохранить её")
     void save_ShouldMapAndSaveEntity() {
         EndpointHitDto dto = new EndpointHitDto("app", "/uri", "127.0.0.1",
                 LocalDateTime.parse("2025-05-11 10:00:00", FMT));
@@ -43,8 +46,8 @@ class StatsServiceTest {
         verify(repository, times(1)).save(entity);
     }
 
-    @DisplayName("Получение статистики без уникальности и без фильтрации URI должно вызывать findStats")
     @Test
+    @DisplayName("Получение статистики без уникальности и без фильтрации URI должно вызывать findStats")
     void getStats_ShouldCallFindStats_WhenUniqueFalseAndUrisNull() {
         String start = "2025-05-01 00:00:00";
         String end = "2025-05-31 23:59:59";
@@ -62,8 +65,8 @@ class StatsServiceTest {
                 .allMatch(v -> v.getHits() == 5L);
     }
 
-    @DisplayName("Получение уникальной статистики должно вызывать findUniqueStats")
     @Test
+    @DisplayName("Получение уникальной статистики должно вызывать findUniqueStats")
     void getStats_ShouldCallFindUniqueStats_WhenUniqueTrue() {
         String start = "2025-05-01 00:00:00";
         String end = "2025-05-31 23:59:59";
@@ -84,8 +87,8 @@ class StatsServiceTest {
                 .containsExactly("/a");
     }
 
-    @DisplayName("Пустой список URI должен трактоваться как null при получении статистики")
     @Test
+    @DisplayName("Пустой список URI должен трактоваться как null при получении статистики")
     void getStats_ShouldTreatEmptyUrisAsNull() {
         String start = "2025-05-01 00:00:00";
         String end = "2025-05-31 23:59:59";

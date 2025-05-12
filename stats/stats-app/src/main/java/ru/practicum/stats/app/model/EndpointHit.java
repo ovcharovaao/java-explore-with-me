@@ -1,4 +1,4 @@
-package ru.practicum.stats.app;
+package ru.practicum.stats.app.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;

@@ -1,6 +1,7 @@
 package ru.practicum.stats.client;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class StatsClient {
@@ -30,7 +32,9 @@ public class StatsClient {
     }
 
     public void sendHit(EndpointHitDto hit) {
+        log.info("Отправка хита в сервис статистики: {}", hit);
         rest.postForEntity(baseUrl + "/hit", hit, Void.class);
+        log.info("Хит успешно отправлен.");
     }
 
     public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end,
@@ -41,7 +45,15 @@ public class StatsClient {
                 .queryParamIfPresent("uris", Optional.ofNullable(uris))
                 .queryParam("unique", unique)
                 .toUriString();
+
+        log.info("Отправка запроса статистики: {}", url);
+
         ResponseEntity<ViewStats[]> resp = rest.getForEntity(url, ViewStats[].class);
-        return Arrays.asList(Objects.requireNonNull(resp.getBody()));
+
+        ViewStats[] body = resp.getBody();
+        int count = body == null ? 0 : body.length;
+
+        log.info("Получено {} записей статистики", count);
+        return Arrays.asList(Objects.requireNonNull(body));
     }
 }

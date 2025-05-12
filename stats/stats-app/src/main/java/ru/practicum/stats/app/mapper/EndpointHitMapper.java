@@ -1,6 +1,7 @@
-package ru.practicum.stats.app;
+package ru.practicum.stats.app.mapper;
 
 import org.mapstruct.Mapper;
+import ru.practicum.stats.app.model.EndpointHit;
 import ru.practicum.stats.dto.EndpointHitDto;
 
 @Mapper(componentModel = "spring")
