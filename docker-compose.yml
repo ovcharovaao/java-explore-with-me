@@ -1,5 +1,5 @@
 services:
-  stats:
+  stats-server:
     build: ./stats/stats-app
     restart: on-failure
     depends_on:
@@ -28,13 +28,13 @@ services:
       context: ./main
     restart: on-failure
     depends_on:
-      - stats
+      - stats-server
       - ewm-db
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://ewm-db:5432/maindb
       SPRING_DATASOURCE_USERNAME: username
       SPRING_DATASOURCE_PASSWORD: password
-      STATS_URL: http://stats:9090
+      STATS_URL: http://stats-server:9090
     ports:
       - "8080:8080"
 
