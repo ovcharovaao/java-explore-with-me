@@ -1,5 +1,6 @@
 package ru.practicum.main.compilation.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import ru.practicum.main.compilation.dto.CompilationDto;
 import ru.practicum.main.compilation.dto.NewCompilationDto;
 import ru.practicum.main.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.main.compilation.service.CompilationService;
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -24,6 +27,9 @@ class AdminCompilationControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @MockBean
     private CompilationService compilationService;
 
@@ -32,6 +38,9 @@ class AdminCompilationControllerTest {
     void createCompilation_shouldReturnCreated() throws Exception {
         NewCompilationDto newDto = new NewCompilationDto();
         newDto.setTitle("Test");
+        newDto.setPinned(false);
+        newDto.setEvents(List.of());
+
         CompilationDto responseDto = new CompilationDto();
         responseDto.setId(1L);
         responseDto.setTitle("Test");
@@ -40,12 +49,7 @@ class AdminCompilationControllerTest {
 
         mockMvc.perform(post("/admin/compilations")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                            {   "title": "Test",
-                                "pinned": false,
-                                "events": []
-                            }
-                        """))
+                        .content(objectMapper.writeValueAsString(newDto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1));
     }
@@ -73,10 +77,7 @@ class AdminCompilationControllerTest {
 
         mockMvc.perform(patch("/admin/compilations/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                            {   "title": "Updated"
-                            }
-                        """))
+                        .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Updated"));
     }
