@@ -18,15 +18,37 @@ services:
       POSTGRES_USER:     username
       POSTGRES_PASSWORD: password
       POSTGRES_DB:       statsdb
+    volumes:
+      - stats-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
-#  ewm-service:
-#    ports:
-#      - "8080:8080"
-#
-#  ewm-db:
-#    image: postgres:16.1
+  ewm-service:
+    build:
+      context: ./main
+    restart: on-failure
+    depends_on:
+      - stats-server
+      - ewm-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://ewm-db:5432/maindb
+      SPRING_DATASOURCE_USERNAME: username
+      SPRING_DATASOURCE_PASSWORD: password
+      STATS_URL: http://stats-server:9090
+    ports:
+      - "8080:8080"
+
+  ewm-db:
+    image: postgres:16.1
+    environment:
+      POSTGRES_USER:     username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB:       maindb
+    volumes:
+      - ewm-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
 
 volumes:
   stats-data:
+  ewm-data:

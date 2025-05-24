@@ -2,7 +2,9 @@ package ru.practicum.stats.app.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.stats.app.mapper.EndpointHitMapper;
 import ru.practicum.stats.app.model.EndpointHit;
 import ru.practicum.stats.app.repository.StatsRepository;
@@ -32,9 +34,15 @@ public class StatsService {
         LocalDateTime st = LocalDateTime.parse(start, FORMAT);
         LocalDateTime en = LocalDateTime.parse(end, FORMAT);
 
-        if (uris != null && uris.isEmpty()) uris = null;
+        if (st.isAfter(en)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Параметр start должен быть раньше end");
+        }
+        if (uris != null && uris.isEmpty()) {
+            uris = null;
+        }
 
-        log.info("Запрос статистики с параметрами: start={}, end={}, uris={}, unique={}", start, end, uris, unique);
+        log.info("Запрос статистики с параметрами: start={}, end={}, uris={}, unique={}",
+                start, end, uris, unique);
 
         List<ViewStats> stats = unique
                 ? repository.findUniqueStats(st, en, uris)

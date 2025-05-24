@@ -1,13 +1,11 @@
 package ru.practicum.stats.client;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.stats.dto.EndpointHitDto;
 import ru.practicum.stats.dto.ViewStats;
 
@@ -16,11 +14,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class StatsClient {
     private final RestTemplate rest;
     private final String baseUrl;
@@ -39,17 +35,20 @@ public class StatsClient {
 
     public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end,
                                     List<String> uris, boolean unique) {
-        String url = UriComponentsBuilder.fromHttpUrl(baseUrl + "/stats")
-                .queryParam("start", start.format(FMT))
-                .queryParam("end", end.format(FMT))
-                .queryParamIfPresent("uris", Optional.ofNullable(uris))
-                .queryParam("unique", unique)
-                .toUriString();
+        StringBuilder urlBuilder = new StringBuilder(baseUrl + "/stats");
+        urlBuilder.append("?start=").append(start.format(FMT));
+        urlBuilder.append("&end=").append(end.format(FMT));
+        if (uris != null && !uris.isEmpty()) {
+            for (String uri : uris) {
+                urlBuilder.append("&uris=").append(uri);
+            }
+        }
+        urlBuilder.append("&unique=").append(unique);
 
+        String url = urlBuilder.toString();
         log.info("Отправка запроса статистики: {}", url);
 
         ResponseEntity<ViewStats[]> resp = rest.getForEntity(url, ViewStats[].class);
-
         ViewStats[] body = resp.getBody();
         int count = body == null ? 0 : body.length;
 
