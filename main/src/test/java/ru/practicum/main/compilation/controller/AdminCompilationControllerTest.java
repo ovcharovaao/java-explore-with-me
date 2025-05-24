@@ -41,8 +41,7 @@ class AdminCompilationControllerTest {
         mockMvc.perform(post("/admin/compilations")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {
-                                "title": "Test",
+                            {   "title": "Test",
                                 "pinned": false,
                                 "events": []
                             }
@@ -75,8 +74,7 @@ class AdminCompilationControllerTest {
         mockMvc.perform(patch("/admin/compilations/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {
-                                "title": "Updated"
+                            {   "title": "Updated"
                             }
                         """))
                 .andExpect(status().isOk())
