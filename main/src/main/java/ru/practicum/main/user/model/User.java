@@ -2,6 +2,10 @@ package ru.practicum.main.user.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.practicum.main.comment.model.Comment;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -19,4 +23,7 @@ public class User {
 
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Comment> comments = new HashSet<>();
 }
