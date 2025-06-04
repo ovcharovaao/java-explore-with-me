@@ -3,10 +3,13 @@ package ru.practicum.main.event.model;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.practicum.main.category.model.Category;
+import ru.practicum.main.comment.model.Comment;
 import ru.practicum.main.location.model.Location;
 import ru.practicum.main.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -67,4 +70,7 @@ public class Event {
 
     @Transient
     private Long confirmedRequests;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Comment> comments = new HashSet<>();
 }
